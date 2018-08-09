@@ -6,7 +6,7 @@ Nodejs server graceful shutdown
 
 ### 引入
 ```javascript
-const ShutDown = require('server-shutdown)
+const ShutDown = require('server-shutdown')
 ```
 
 ### API
