@@ -1,5 +1,5 @@
 {
-  "name": "server-shutdown",
+  "name": "http-server-shutdown",
   "version": "0.0.1",
   "description": "Nodejs server graceful shutdown",
   "main": "./index.js",
