@@ -1,0 +1,26 @@
+{
+  "name": "server-shutdown",
+  "version": "0.0.1",
+  "description": "Nodejs server graceful shutdown",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dxil/server-shutdown.git"
+  },
+  "keywords": [
+    "http",
+    "graceful-shutdown"
+  ],
+  "author": "Cuzz(cuzzcool123@gamil.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dxil/server-shutdown/issues"
+  },
+  "homepage": "https://github.com/dxil/server-shutdown",
+  "engines": {
+    "node": ">=4.0.0"
+  }
+}
