@@ -44,7 +44,7 @@ class ShutDown {
     })
 
     process.on('exit', () => {
-      if (this.opts.after && isFunction(this.opts.after)) {
+      if (this.isShutDown && this.opts.after && isFunction(this.opts.after)) {
         this.opts.after()
       }
     })
