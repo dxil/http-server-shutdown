@@ -26,16 +26,17 @@ class ShutDown {
   }
   _listener () {
     this.server.on('request', (req, res) => {
+      req.socket._idle = false
       res.on('finish', () => {
-        if (this.isShutDown) {
-          this._destroySocket(req.socket)
-        }
+        req.socket._idle = true
+        this._destroySocket(req.socket)
       })
     })
 
     this.server.on('connection', (socket) => {
       let id = this.total++
       socket._connectionId = id
+      socket._idle = true
       this.connections[id] = socket
 
       socket.on('close', () => {
@@ -50,8 +51,10 @@ class ShutDown {
     })
   }
   _destroySocket (socket) {
-    socket.destroy()
-    delete this.connections[socket._connectionId]
+    if (this.isShutDown && socket._idle) {
+      socket.destroy()
+      delete this.connections[socket._connectionId]
+    }
   }
   _destroyAllSocket () {
     Object.keys(this.connections).forEach(key => {
@@ -63,7 +66,7 @@ class ShutDown {
       this.server.getConnections((err, count) => {
         if (err) return reject(err)
         if (!count) return resolve()
-
+        this._destroyAllSocket()
         this.server.close(function (_err) {
           if (_err) return reject(_err)
           resolve()
