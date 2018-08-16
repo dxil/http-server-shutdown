@@ -25,8 +25,7 @@ const ShutDown = require('http-server-shutdown')
     after: function () { // 关机后的处理函数
       console.log('after: server gracefull shutted down.....')
     },
-    errCb: function (err) { // 出现错误时的err回调，传入error对象 
-
+    errCb: function (err) { // 出现错误时的err回调，传入Error对象 
     }
   }
 )
