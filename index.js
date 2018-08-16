@@ -10,9 +10,16 @@ class ShutDown {
     this.total = 0
     this.isShutDown = false
 
+    if (opts.errCb && !isFunction(opts.errCb)) {
+      opts.errCb = ''
+    }
+
     this.opts = Object.assign({
       signals: ['SIGINT', 'SIGTERM'],
-      timeout: 30000
+      timeout: 30000,
+      errCb: function (e) {
+        e && console.log(e.message || 'unknown error')
+      }
     }, opts)
 
     this._init()
@@ -82,7 +89,7 @@ class ShutDown {
 
     if (this.opts.timeout) {
       setTimeout(() => {
-        console.log(' timed out of' + this.opts.timeout + 'ms! forced shutdown !')
+        this.opts.errCb(new Error('timed out of' + this.opts.timeout + 'ms! forced shutdown !'))
         process.exit(1)
       }, this.opts.timeout)
     }
@@ -90,14 +97,14 @@ class ShutDown {
       this.opts.before().then(() => this._serverClose()).then(() => {
         process.exit(0)
       }).catch((err) => {
-        console.error('shutdown got err:', err)
+        this.opts.errCb(err)
         process.exit(1)
       })
     } else {
       this._serverClose().then(() => {
         process.exit(0)
       }).catch((err) => {
-        console.error('shutdown got err:', err)
+        this.opts.errCb(err)
         process.exit(1)
       })
     }
@@ -107,5 +114,7 @@ class ShutDown {
 function isFunction (target) {
   return Object.prototype.toString.call(target) === '[object Function]'
 }
+
+// todo: 关机期间不应该再接收新的连接请求，以免导致无法关机。 需要采用立刻访问请求方式？
 
 module.exports = ShutDown

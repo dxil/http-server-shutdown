@@ -21,7 +21,6 @@ const ShutDown = require('http-server-shutdown')
           resolve(console.log('before 123'))
         }, 1000)
       })
-      // console.log('123')
     },
     after: function () { // 关机后的处理函数
       console.log('after: server gracefull shutted down.....')
