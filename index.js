@@ -34,7 +34,7 @@ class ShutDown {
   _listener () {
     this.server.on('request', (req, res) => {
       req.socket._idle = false
-      res.on('finish', () => {
+      res.on('finish', () => { // todo socket公用情况，使用计数优化
         req.socket._idle = true
         this._destroySocket(req.socket)
       })
@@ -81,7 +81,7 @@ class ShutDown {
       })
     })
   }
-  close () {
+  async close () {
     if (this.isShutDown) {
       return
     }
@@ -94,7 +94,13 @@ class ShutDown {
       }, this.opts.timeout)
     }
     if (this.opts.before && isFunction(this.opts.before)) {
-      this.opts.before().then(() => this._serverClose()).then(() => {
+      try {
+        await this.opts.before()
+      } catch (e) {
+        this.opts.errCb(e)
+        process.exit(1)
+      }
+      this._serverClose().then(() => {
         process.exit(0)
       }).catch((err) => {
         this.opts.errCb(err)
