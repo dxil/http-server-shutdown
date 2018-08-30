@@ -91,7 +91,7 @@ class ShutDown {
       setTimeout(() => {
         this.opts.errCb(new Error('timed out of ' + this.opts.timeout + 'ms! forced shutdown !'))
         process.exit(1)
-      }, this.opts.timeout)
+      }, this.opts.timeout).unref()
     }
     if (this.opts.before && isFunction(this.opts.before)) {
       try {

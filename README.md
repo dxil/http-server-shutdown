@@ -22,10 +22,10 @@ const ShutDown = require('http-server-shutdown')
         }, 1000)
       })
     },
-    after: function () { // 关机后的处理函数
+    after: function () { // 关机后的处理函数， 仅处理同步方法
       console.log('after: server gracefull shutted down.....')
     },
-    errCb: function (err) { // 出现错误时的err回调，传入Error对象 
+    errCb: function (err) { // 需要提供出现错误时的error回调，传入Error对象
     }
   }
 )
