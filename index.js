@@ -16,6 +16,7 @@ class ShutDown {
 
     this.opts = Object.assign({
       signals: ['SIGINT', 'SIGTERM'],
+      monitor: true,
       timeout: 30000,
       errCb: function (e) {
         e && console.log(e.message || 'unknown error')
@@ -27,9 +28,11 @@ class ShutDown {
 
   _init () {
     this._listener()
-    this.opts.signals.forEach(signal => {
-      signal && process.on(signal, () => this.close(signal))
-    })
+    if (this.monitor) { // 是否需要监听功能
+      this.opts.signals.forEach(signal => {
+        signal && process.on(signal, () => this.close(signal))
+      })
+    }
   }
   _listener () {
     this.server.on('request', (req, res) => {
@@ -52,13 +55,13 @@ class ShutDown {
     })
 
     process.on('exit', () => {
-      if (this.isShutDown && this.opts.after && isFunction(this.opts.after)) {
+      if (this.isShutDown && this.opts.after && this.opts.monitor && isFunction(this.opts.after)) {
         this.opts.after()
       }
     })
   }
   _destroySocket (socket) {
-    if (this.isShutDown && socket._idle) {
+    if ((this.isShutDown || !this.opts.monitor) && socket._idle) {
       socket.destroy()
       delete this.connections[socket._connectionId]
     }
@@ -68,7 +71,7 @@ class ShutDown {
       this._destroySocket(this.connections[key])
     })
   }
-  _serverClose () {
+  serverClose () {
     return new Promise((resolve, reject) => {
       this.server.getConnections((err, count) => {
         if (err) return reject(err)
@@ -100,14 +103,14 @@ class ShutDown {
         this.opts.errCb(e)
         process.exit(1)
       }
-      this._serverClose().then(() => {
+      this.serverClose().then(() => {
         process.exit(0)
       }).catch((err) => {
         this.opts.errCb(err)
         process.exit(1)
       })
     } else {
-      this._serverClose().then(() => {
+      this.serverClose().then(() => {
         process.exit(0)
       }).catch((err) => {
         this.opts.errCb(err)

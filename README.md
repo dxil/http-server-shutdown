@@ -10,6 +10,7 @@ const ShutDown = require('http-server-shutdown')
 ```
 
 ### API
+方式一： 如果需要使用shutDown的关闭服务，你需要使用以下方式
 ```javascript
   new ShutDown(server, // 传入 server = app.listen(...)
   {
@@ -30,3 +31,14 @@ const ShutDown = require('http-server-shutdown')
   }
 )
 ```
+
+方式二： 如果不想使用shutdown关闭服务，而需要处理关闭期间的socket请求，处理并断开**所有**connection后返回（关闭期间需要自己重定向或停止接收新的请求，否则会有理论上永远处理不完connection的可能）
+```javascript
+let shutdown = new ShutDown(server,
+  {
+    monitor: false  // 控制是否需要开启监控，默认为false
+  }
+)
+shutdown.serverClose()  // 连接全部关闭后将会返回一个promise
+```
+
