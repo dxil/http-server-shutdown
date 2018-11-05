@@ -4,6 +4,12 @@ Nodejs server graceful shutdown
 ### 用途
 程序断开或重启时，已连接的socket连接将会在处理完成后再重启
 
+### 注意
+使用pm2管理应用程序时，需要在启动时加上 `--kill-timeout 10000` 参数，否则pm2会立刻结束你的任务
+```bash
+pm2 start index.js --kill-timeout 10000
+```
+
 ### 引入
 ```javascript
 const ShutDown = require('http-server-shutdown')
