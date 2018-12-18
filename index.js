@@ -28,7 +28,7 @@ class ShutDown {
 
   _init () {
     this._listener()
-    if (this.monitor) { // 是否需要监听功能
+    if (this.opts.monitor) { // 是否需要监听功能
       this.opts.signals.forEach(signal => {
         signal && process.on(signal, () => this.close(signal))
       })
@@ -61,7 +61,7 @@ class ShutDown {
     })
   }
   _destroySocket (socket) {
-    if ((this.isShutDown || !this.opts.monitor) && socket._idle) {
+    if ((this.isShutDown && !this.opts.monitor) && socket._idle) {
       socket.destroy()
       delete this.connections[socket._connectionId]
     }
@@ -72,6 +72,7 @@ class ShutDown {
     })
   }
   serverClose () {
+    this.isShutDown = true
     return new Promise((resolve, reject) => {
       this.server.getConnections((err, count) => {
         if (err) return reject(err)
@@ -88,7 +89,6 @@ class ShutDown {
     if (this.isShutDown) {
       return
     }
-    this.isShutDown = true
 
     if (this.opts.timeout) {
       setTimeout(() => {
