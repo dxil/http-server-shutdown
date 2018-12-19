@@ -42,7 +42,7 @@ const ShutDown = require('http-server-shutdown')
 ```javascript
 let shutdown = new ShutDown(server,
   {
-    monitor: false  // 控制是否需要开启监控，默认为false
+    monitor: false  // 控制是否需要开启监控，默认为true
   }
 )
 shutdown.serverClose()  // 连接全部关闭后将会返回一个promise
