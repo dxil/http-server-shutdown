@@ -32,7 +32,8 @@ const ShutDown = require('http-server-shutdown')
     after: function () { // 关机后的处理函数， 仅处理同步方法
       console.log('after: server gracefull shutted down.....')
     },
-    errCb: function (err) { // 需要提供出现错误时的error回调，传入Error对象
+    errCb: function (e) { // 需要提供出现错误时的error回调，传入Error对象
+      e && console.log(e.message || 'unknown error')
     }
   }
 )
