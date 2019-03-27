@@ -76,8 +76,10 @@ class ShutDown {
     return new Promise((resolve, reject) => {
       this.server.getConnections((err, count) => {
         if (err) return reject(err)
-        if (!count) return resolve()
-        this._destroyAllSocket()
+        if (count) {
+          this._destroyAllSocket()
+        }
+
         this.server.close(function (_err) {
           if (_err) return reject(_err)
           resolve()
